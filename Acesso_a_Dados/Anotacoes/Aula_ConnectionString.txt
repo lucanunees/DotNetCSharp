@@ -1,0 +1,28 @@
+
+	== Anotações  Acesso à dados com .NET ==
+
+- Aula Connection String.
+
+Criamos um projeto chamado DataAcess.
+Para criar um projeto dentro do visual code, executar dentro da pasta o seguinte comando:
+
+"dotnet new console" no novo dotnet 6.0 em diante ele não cria o main.
+
+para utilizar o método "antigo" utilizar o comando:
+dotnet new console --use-program-main
+
+Ele criará um projeto console com tudo que precisa.
+
+-----------------------------------------------------------------------------------------------
+
+ Dentro do projeto, temos uma const chamada connectionString, ela que faz a conexão com o nosso 
+de dados.
+Essa seria a connectionString:
+"Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;"
+
+O que significa cada parametro, separado por " ; ":
+
+SERVER=localhost,1433 : Servidor que iremos conectar seguido a porta.
+Database=balta : Nome do banco de dados que iremos conectar.
+User ID=sa : Usuario que tem acesso ao banco.
+Password=Punto@2015 : Senha do usuario, que geralmente não é exposta desta forma.
