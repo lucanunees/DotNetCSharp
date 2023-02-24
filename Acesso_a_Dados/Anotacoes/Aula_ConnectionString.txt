@@ -26,3 +26,6 @@ SERVER=localhost,1433 : Servidor que iremos conectar seguido a porta.
 Database=balta : Nome do banco de dados que iremos conectar.
 User ID=sa : Usuario que tem acesso ao banco.
 Password=Punto@2015 : Senha do usuario, que geralmente não é exposta desta forma.
+
+-----------------------------------------------------------------------------------------------
+

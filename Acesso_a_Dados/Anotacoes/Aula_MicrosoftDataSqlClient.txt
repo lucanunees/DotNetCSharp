@@ -1,0 +1,62 @@
+	
+	=== Anotações  Acesso à dados com .NET ===
+	
+- Microsoft.Data.SqlClient
+	
+	Após adicionar a connectionString no código, utilizamos o pacote 
+Microsoft.Data.SqlClient, como se fosse uma extensão que fica no Nuget, temos vários 
+pacotes que podemos utilizar e criar.. esses pacotes são funções já criadas e que podemos reutilizar
+e quando for utilizar, adicionar o using.
+
+	Para efetuar a instalaçao deste pacote no VSCode, utilizamos o terminal e inserimos
+a seguinte linha de comando dentro da pasta do projeto:
+
+ "dotnet add package Microsoft.Data.SqlClient"
+
+	Obs.: Dentro do arquivo csproj irá aparecer a referencia do pacote instalado.
+	Obs.: Para realizar o download de uma versão especifica, no final acrescentar --version 2.3.1
+
+ - Para remover um pacote:
+ "dotnet remove package Microsoft.Data.SqlClient"
+---------------------------------------------------------------------------------------------------------
+
+	=== Conectando ao Banco ===
+
+	Para se conectar de fato com o banco de dados, utilizamos um objeto chamado
+SQLConnection.
+	Sintaxe:
+	
+		"var connection = new SQLConnection();"
+		
+	Quando realizamos uma conexão com o banco, devemos conectar, executar o que precisamos e sair
+isso é abrir a conexão e fecha-lá.
+
+	Sintaxe:
+	
+	"	
+		const string connectionString 
+        = "Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
+		
+	// Dentro do método eu passo a minha string de conexão.
+	   var connection = new SQLConnection(connectionString);
+	   
+	   connection.Open();
+	   
+			//Aqui dentro eu executo a minha query.
+		
+	   connection.Close();
+	   connection.Dispose(); --> Esse comando irá destruir o objeto e fechar a conexão. 
+						     -- Caso não vá utilizar novamente a conexão é valido usar.			
+	"
+
+
+	Segunda forma de se fazer a conexão e mais otimizada, que já realiza o open e o dispose.
+     
+	Sintaxe:
+	
+	"	
+		using(var connection2 = new SqlConnection()){
+
+            Console.WriteLine("Realizando da forma mais otimizada.");
+        }
+	"
