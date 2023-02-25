@@ -1,7 +1,7 @@
 	
 	=== Anotações  Acesso à dados com .NET ===
 	
-- Microsoft.Data.SqlClient
+- Aula Microsoft.Data.SqlClient
 	
 	Após adicionar a connectionString no código, utilizamos o pacote 
 Microsoft.Data.SqlClient, como se fosse uma extensão que fica no Nuget, temos vários 

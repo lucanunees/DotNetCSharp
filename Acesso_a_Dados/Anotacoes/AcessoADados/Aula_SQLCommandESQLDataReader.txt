@@ -1,0 +1,58 @@
+
+	=== Anotações  Acesso à dados com .NET ===
+	
+- Aula SQLCommand e SQLDataReader
+
+	O uso do ODO para realizar o acesso e executar alguma query no banco é muito borocratico.
+um exemplo abaixo da sintaxe que iremos executar para efetuar um comando no banco.
+
+	Sintaxe:
+
+using Microsoft.Data.SqlClient;
+
+namespace DataAcess;
+class Program
+{
+    static void Main(string[] args)
+    {
+        const string connectionString 
+        = "Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
+		
+        var connection = new SqlConnection(connectionString);
+
+        using(var connection = new SqlConnection(connectionString)){
+
+            Console.WriteLine("Conectado ao banco.");
+			connection.Open();
+			
+			//Estou realizando um comando e utilizando o using para garantir que após a execução
+			//O objeto será destruido.
+			
+			using(var command = new SQLCommand())
+			{
+				//Garantindo que a minha conexão está aberta.
+				command.connection = connection;
+				
+				//Passando o tipo de comando que será executado.
+				command.CommandType = System.Data.CommandType.Text;
+							
+                //Realizando o comando à ser executado no banco.
+                command.CommandText = 
+                "SELECT [Id], [Title] FROM [Category] WITH (NOLOCK)";
+				
+				
+				//Para realizar a leitura do SELECT
+                var reader = command.ExecuteReader();
+
+                //Para percororrer os dados.
+                // Como o reader é um leitor que não volta, no caso do while enquanto estiver dados ele vai continuar lendo.
+                while(reader.Read())
+                {
+                    //Desta forma eu estou percorrendo a leitura da query, 
+                    //pegando as informações do reader coluna 0 que é o ID e a string title, coluna 1
+                    Console.WriteLine($"{reader.GetGuid(0)}-{reader.GetString(1)}");
+                }   
+			}
+        }
+    }
+}
