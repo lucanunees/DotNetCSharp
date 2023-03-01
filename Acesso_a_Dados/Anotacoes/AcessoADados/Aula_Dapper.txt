@@ -1,4 +1,0 @@
-
-	=== Anotações  Acesso à dados com .NET ===
-	
-- Aula Dapper
