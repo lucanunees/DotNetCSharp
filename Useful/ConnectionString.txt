@@ -1,0 +1,8 @@
+docker run --name sqlserver -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Punto@2015" -p 1433:1433 -d mcr.microsoft.com/mssql/server
+
+docker run -v ~/docker --name sqlserver -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Punto@2015" -p 1433:1433 -d mcr.microsoft.com/mssql/server
+
+docker run -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Punto@2015" -e "MSSQL_PID=Developer" -e "MSSQL_USER=SA" -p 1433:1433 -d --name=sqlserver mcr.microsoft.com/azure-sql-edge
+
+
+Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;
