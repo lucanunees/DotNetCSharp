@@ -11,10 +11,178 @@ Para realizar a instalação basta abrir o terminal e digitar: dotnet add packag
   Ou seja, se eu tenho uma tabela cliente no banco, dentro da model eu crio uma classe com as colunas da tabela cliente.
 
 
------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
 
 	O Dapper retornar uma lista de objetos, assim podendo manipulalos.
 Quando realizo o formato abaixo, ele cria a lista e retorna de acordo com a classe passada em <>.
 
 	//Neste caso estou retornando a lista já no formato da minha classe.
     var categories = connection.Query<Category>("SELECT [Id], [Title] FROM Category");
+	
+
+	//Realizando um insert.   
+	Uma boa pratica é realizar todos os valores do insert no código e mandar somente a informação para o banco
+para apenas realizar o insert.
+	 //Criando a estrutura de insert, que pode ser montado fora do Using para evitar muito processamento
+     //dentro da conexão com o banco. Lembrando que o Dapper abre e fecha automatico a conexão.
+	Sintaxe:
+   
+       
+        var category = new Category();    
+        var insertSql = "INSERT INTO [Category] VALUES (id, title, url, summary, order, description, featured)";
+
+	Sintaxe Completa:
+	
+class Program
+{
+    static void Main(string[] args)
+    {
+        const string connectionString
+        = "Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
+  
+        var category = new Category();  // Criei a categoria e passei as informações.  
+        category.Id = Guid.NewGuid();
+        category.Title = "Amazon AWS";
+        category.Url = "cloud";
+        category.Summary = "Aprenda sobre cloud AWS (Amazon Web Services)";
+        category.Order = 8;
+        category.Description = "";
+        category.Featured = false;
+		
+		var insertSql = @"INSERT INTO 
+                          [Category] 
+                        VALUES (
+                            id, 
+                            title, 
+                            url, 
+                            summary, 
+                            order, 
+                            description, 
+                            featured
+                            )";
+
+        using (var connection = new SqlConnection(connectionString))
+        {
+            var categories = connection.Query<Category>("SELECT [Id], [Title] FROM Category");
+
+            foreach (var item in categories)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+        Console.WriteLine("Operação com o banco de dados realizada com sucesso.");
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------
+	 
+	 Utilizando o SQL Injection, ele é como se fosse um ataque aonde simplesmente você passa uma query atraves de um campo.
+Você deve prefinir esse ataque que é utilizando bastante em sites, a fim de realizar um insert dentro de um campo. 
+		
+		exemplo:
+		category.Url = "' INSERT INTO USERS VALUES ()	'"; -- Um usuario ao preencher um campo em um site, pode realizar esse ataque.
+Como previnir isso, não concatenar strings com inserts, updates, selects etc.
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        const string connectionString
+        = "Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
+  
+        var category = new Category();  // Criei a categoria e passei as informações.  
+        category.Id = Guid.NewGuid();
+        category.Title = "Amazon AWS";
+        category.Url = "cloud";
+        category.Summary = "Aprenda sobre cloud AWS (Amazon Web Services)";
+        category.Order = 8;
+        category.Description = "";
+        category.Featured = false;
+		
+		var insertSql = $@"INSERT INTO 
+                          [Category] 
+                        VALUES (
+                            {category.ID},  -- Exemplo de concatenação. 
+                            title, 
+                            url, 
+                            summary, 
+                            order, 
+                            description, 
+                            featured
+                            )";
+
+        using (var connection = new SqlConnection(connectionString))
+        {
+            var categories = connection.Query<Category>("SELECT [Id], [Title] FROM Category");
+
+            foreach (var item in categories)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+        Console.WriteLine("Operação com o banco de dados realizada com sucesso.");
+    }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+	Para evitar esse tipo, devemos utilizar SQLParameter, ou seja parametros.
+	Utilizando o @, eu estou criando os parametros.
+Exemplo:
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        const string connectionString
+        = "Server=localhost,1433;Database=balta;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
+  
+        var category = new Category();  // Criei a categoria e passei as informações.  
+        category.Id = Guid.NewGuid();
+        category.Title = "Amazon AWS";
+        category.Url = "cloud";
+        category.Summary = "Aprenda sobre cloud AWS (Amazon Web Services)";
+        category.Order = 8;
+        category.Description = "";
+        category.Featured = false;
+		
+		var insertSql = @"INSERT INTO 
+                          [Category] 
+                        VALUES (
+							--@Teste,
+                            @Id, 
+                            @Title, 
+                            @Url, 
+                            @Summary, 
+                            @Order, 
+                            @Description, 
+                            @Featured
+                            )";
+
+        using (var connection = new SqlConnection(connectionString))
+        {
+            //Esse execute que realiza o insert, acrescentando a virgula eu passo os parametros.
+            //Utilizar sempre a mesma nomenclatura dos parametros.
+			//Como estou passando os parametros com o mesmo nome, não preciso declarar aqui, por exemplo teste
+            
+			//Ele me retorna a quantidade de linhas afetadas.
+			var rows = connection.Execute(insertSql, new {
+                --Teste = category.Id -- Exemplo caso eu utilizasse nomenclatura diferente.
+				category.Id,
+                category.Title,
+                category.Url,
+                category.Summary,
+                category.Order,
+                category.Description,
+                category.Featured
+            });
+			
+			console.WriteLine($"{rows} linhas inseridas.");
+			var categories = connection.Query<Category>("SELECT [Id], [Title] FROM Category");
+				
+            foreach (var item in categories)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+        Console.WriteLine("Operação com o banco de dados realizada com sucesso.");
+    }
+}
