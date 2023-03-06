@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj": {}
+    "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Imersao\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj": {
+    "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Imersao\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Imersao\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj",
         "projectName": "Acesso_A_Dados_CRUD",
-        "projectPath": "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Imersao\\Acesso_A_Dados_Imersao\\Acesso_A_Dados_CRUD.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Acesso_A_Dados_Imersao\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\Repositorio_GITHUB\\DotNetCSharp\\Acesso_A_Dados\\Projeto\\Imersao\\Acesso_A_Dados_Imersao\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",

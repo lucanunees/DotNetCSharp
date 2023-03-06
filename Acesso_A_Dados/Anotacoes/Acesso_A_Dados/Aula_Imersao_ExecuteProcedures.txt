@@ -1,0 +1,74 @@
+
+	=== Anotações  Acesso à dados com .NET ===
+	
+- Imersão - Aula Execute Procedures.
+
+	Criamos uma procedure no banco de dados, que realiza o delete do student no cruso e do student.
+	
+USE [balta]
+GO
+
+CREATE OR ALTER PROCEDURE spDeleteStudent(
+    @StudentId UNIQUEIDENTIFIER
+)
+AS
+    BEGIN TRANSACTION
+        DELETE FROM
+            [StudentCourse]
+        WHERE
+            [StudentId] = @StudentId
+
+        DELETE FROM 
+            [Student]
+        WHERE 
+            [Id] = @StudentId
+    COMMIT
+	
+--------------------------------------------------------------------------------------------------------------------------
+
+	Como executar a chamada da procedure, criamos um método que execute a procedure e que nesse caso não
+irá retornar nada, apenas realizar o delete do aluno.
+    
+    static void ExecuteProcedure(SqlConnection connection){
+
+        //Só passar o nome da procedure.
+        var procedure = "[spDeleteStudent]";
+
+        //Para acrescentar mais parametros, só adicionar a pos a "".
+        var pars = new {StudentId = "27ccfdb1-9945-4751-b1b3-c0917ed12f12"};
+
+        var affectedRows = connection.Execute(procedure, pars, commandType: CommandType.StoredProcedure);
+
+        Console.WriteLine($"{affectedRows}, quantidade de registros deletados.");
+        
+    }
+	
+--------------------------------------------------------------------------------------------------------------------------
+
+	Para realizar uma leitura de um procedure e retornar esse valor.
+utilizamos o connection.query para executar a query e retornar uma lista de objetos, que não precisar ser tipada, porém
+caso não for tipada, você não teria acesso as propriedades sendo assim, teria que passar no console.WriteLine as colunas
+corretamentes.
+
+	Se eu quisesse que fosse retornado um tipo de classe especifica, eu poderia utilizar:
+    var courses = connection.Query<Courses>(procedure, pars, commandType: CommandType.StoredProcedure);
+	Sem as <> ele gera um objeto dinamico. 
+
+    static void ExecuteReadProcedure(SqlConnection connection){
+
+        var procedure = "[spGetCoursesByCategory]";
+        
+        var pars = new {CategoryId = "b4c5af73-7e02-4ff7-951c-f69ee1729cac"};
+
+        //No caso ao invés de utilizar connection.execute, utilizamos o connection.query, que irá retornar uma lista.
+        var courses = connection.Query(procedure, pars, commandType: CommandType.StoredProcedure);
+
+        //Desta forma criamos um objeto dinamico, sendo assim não sendo possivel o acesso as propriedades.
+        //O Corretor seria criar uma classe com as propriedades e tipar esse objeto.
+        foreach (var item in courses){
+
+            Console.WriteLine($"{item.Id}-{item.Title}");
+        }
+
+
+    }
