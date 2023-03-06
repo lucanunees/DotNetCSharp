@@ -1,0 +1,34 @@
+
+	=== Anotações  Acesso à dados com .NET ===
+	
+- Imersão - Aula Execute Many.
+
+	Utilizando o array dentro do new, podemos passar mais de um insert.
+deixando a execução mais rápida, sem precisar abrir e fechar a conexão diversas vezes.
+
+
+        var rows = connection.Execute(insertSql, new[]{ 
+            new
+        {
+            category.Id,
+            category.Title,
+            category.Url,
+            category.Summary,
+            category.Order,
+            category.Description,
+            category.Featured
+
+            
+        },
+            new 
+            {
+            newCategory.Id,
+            newCategory.Title,
+            newCategory.Url,
+            newCategory.Summary,
+            newCategory.Order,
+            newCategory.Description,
+            newCategory.Featured
+            }
+
+        });
