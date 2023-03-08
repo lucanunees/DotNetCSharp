@@ -1,0 +1,60 @@
+
+=== Anotações  Acesso à dados com .NET ===
+	
+- Imersão - Aula OneToOne
+	
+	Realizar o mapeamento das colunas da query.
+é necessario criar models, passando as colunas.
+	Pode fazer no formato dinamico, sem passar criar as models, porém o dapper se perde 
+e até melhor tipar.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	Criei duas classes, CareerItem e Course, foi criado também as propriedades/colunas da query
+e foi adicionado na CareerItem um objeto Course, ou seja, estou linkando um com o outro.
+	Desta forma quando estanciar a classe CareerItem eu vou ter acesso as propriedades/colunas da
+classe Course.
+
+namespace Acesso_A_Dados_Imersao.Models
+{
+    public class CareerItem
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public Course Course { get; set; } // Estou ligando um com o outro, ele vai ter o objeto da classe Course.
+    }
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	O método de chamada é :
+
+static void OneToOne(SqlConnection connection)
+    {
+        var sql = @" 
+                    SELECT 
+                     *
+                    FROM
+                        [CareerItem]
+                    INNER JOIN 
+                        [Course]
+                            ON [CareerItem].[CourseId] = [Course].[Id]";
+
+
+// Eu tenho que realizar a execução da query, passando que eu tenho na query um CareerItem e um course e o resultado final/junção será um CareerItem.
+        var items = connection.Query<CareerItem, Course, CareerItem>(
+            sql,
+// Após o SQl eu preciso criar uma função passando os parametros careerItem e course, que o resultado em cima pode enviar tanto um careerItem como um course.		
+            (careerItem, course) => 
+            {
+                careerItem.Course = course;
+                return careerItem;
+            }, splitOn: "Id"); // E o SPLIT é que serapa uma tabela da outra.. que no caso é o Id
+
+        foreach(var item in items)
+        {
+           Console.WriteLine($"{item.Title} - Curso: {item.Course.Title}");
+        }
+    }
+
+}

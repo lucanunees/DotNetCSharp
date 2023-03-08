@@ -1,0 +1,4 @@
+
+=== Anotações  Acesso à dados com .NET ===
+	
+- Imersão - Aula Execute Scalar.
