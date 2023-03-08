@@ -69,6 +69,4 @@ corretamentes.
 
             Console.WriteLine($"{item.Id}-{item.Title}");
         }
-
-
     }

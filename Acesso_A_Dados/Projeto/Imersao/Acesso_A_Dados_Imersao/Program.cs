@@ -14,12 +14,14 @@ class Program
 
         using (var connection = new SqlConnection(connectionString))
         {
-            //UpdateCategory(connection);
-            //ManyCreateCategory(connection);
-            //ListCategories(connection);
-            //CreateCategory(connection); -- Deixei comentado para não gerar outra categoria.      
-            //ExecuteProcedure(connection);
-            ExecuteReadProcedure(connection);
+            // UpdateCategory(connection);
+            // ManyCreateCategory(connection);
+            // ListCategories(connection);
+            // CreateCategory(connection); -- Deixei comentado para não gerar outra categoria.      
+            // ExecuteProcedure(connection);
+            // ExecuteReadProcedure(connection);
+            // ReadView(connection);
+            OneToOne(connection);
         }
     }
 
@@ -142,7 +144,6 @@ class Program
         });
 
         Console.WriteLine($"{rows} linhas inseridas.");
-
     }
 
     static void UpdateCategory(SqlConnection connection)
@@ -163,7 +164,6 @@ class Program
 
     static void ExecuteProcedure(SqlConnection connection)
     {
-
         //Só passar o nome da procedure.
         var procedure = "[spDeleteStudent]";
 
@@ -173,14 +173,13 @@ class Program
         var affectedRows = connection.Execute(procedure, pars, commandType: CommandType.StoredProcedure);
 
         Console.WriteLine($"{affectedRows}, quantidade de registros deletados.");
-
     }
 
-    static void ExecuteReadProcedure(SqlConnection connection){
-
+    static void ExecuteReadProcedure(SqlConnection connection)
+    {
         var procedure = "[spGetCoursesByCategory]";
-        
-        var pars = new {CategoryId = "b4c5af73-7e02-4ff7-951c-f69ee1729cac"};
+
+        var pars = new { CategoryId = "b4c5af73-7e02-4ff7-951c-f69ee1729cac" };
 
         //No caso ao invés de utilizar connection.execute, utilizamos o connection.query, que irá retornar uma lista.
         var courses = connection.Query(procedure, pars, commandType: CommandType.StoredProcedure);
@@ -189,14 +188,51 @@ class Program
         //  var courses = connection.Query<Courses>(procedure, pars, commandType: CommandType.StoredProcedure);
         //Sem as <> ele gera um objeto dinamico. 
 
-
         //Desta forma criamos um objeto dinamico, sendo assim não sendo possivel o acesso as propriedades.
         //O Corretor seria criar uma classe com as propriedades e tipar esse objeto.
-        foreach (var item in courses){
-
+        foreach (var item in courses)
+        {
             Console.WriteLine($"{item.Id}-{item.Title}");
         }
     }
 
+    static void ReadView(SqlConnection connection)
+    {
+        var sql = "SELECT * FROM vwCourses";
+
+        var courses = connection.Query(sql);
+
+        foreach (var item in courses)
+        {
+            Console.WriteLine($"{item.Id} - {item.Title}");
+        }
+    }
+
+    static void OneToOne(SqlConnection connection)
+    {
+        var sql = @" 
+                    SELECT 
+                     *
+                    FROM
+                        [CareerItem]
+                    INNER JOIN 
+                        [Course]
+                            ON [CareerItem].[CourseId] = [Course].[Id]";
+
+        // Eu tenho que realizar a execução da query, passando que eu tenho na query um CareerItem e um course e o resultado final/junção será um CareerItem.
+        var items = connection.Query<CareerItem, Course, CareerItem>(
+            sql,
+            // Após o SQl eu preciso criar uma função passando os parametros careerItem e course, que o resultado em cima pode enviar tanto um careerItem como um course.			
+            (careerItem, course) =>
+            {
+                careerItem.Course = course;
+                return careerItem;
+            }, splitOn: "Id"); // E o SPLIT é que serapa uma tabela da outra.. que no caso é o Id
+
+        foreach (var item in items)
+        {
+            Console.WriteLine($"{item.Title} - Curso: {item.Course.Title}");
+        }
+    }
 
 }
