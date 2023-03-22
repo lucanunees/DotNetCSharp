@@ -1,0 +1,33 @@
+
+=== Anotações  Acesso à dados com .NET ===
+	
+- Imersão - Aula QuerMultiple
+
+ Ele executa uma query atrás da outra, separando por virgula.
+ 
+ 
+ Exemplo:
+   static void QuerMultiple(SqlConnection connection){
+
+        // Pra realizar o sql Multiplo basta eu dividar a query com ;
+        var query = $"SELECT * FROM [Category]; SELECT * FROM [Course]";
+
+        using (var multi = connection.QueryMultiple(query)){
+
+            //Aqui estou atribuindo os valores do retorno para as variaves e passando a tipagem(model).
+            var categories = multi.Read<Category>();
+            var courses = multi.Read<Course>();
+
+            foreach (var item in categories)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+
+            foreach (var item in courses)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+
+
+    }
