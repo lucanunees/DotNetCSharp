@@ -21,7 +21,10 @@ class Program
             // ExecuteProcedure(connection);
             // ExecuteReadProcedure(connection);
             // ReadView(connection);
-            OneToOne(connection);
+            // OneToOne(connection);
+            // OneToMany(connection);
+            // QuerMultiple(connection);
+            SelectIn(connection);
         }
     }
 
@@ -75,10 +78,8 @@ class Program
         });
 
         Console.WriteLine($"{rows} linhas inseridas.");
-
     }
 
-    //Podemos criar varias categorias de uma vez, utilizando array ao realizar o execute
     static void ManyCreateCategory(SqlConnection connection)
     {
         // Criei a categoria e passei as informações.  
@@ -117,6 +118,7 @@ class Program
 
         //Ele me retorna a quantidade de linhas afetadas.
         //Utilizando o array dentro do new, podemos passar mais de um insert.
+        //Podemos criar varias categorias de uma vez, utilizando array ao realizar o execute
         var rows = connection.Execute(insertSql, new[]{
             new
         {
@@ -234,5 +236,126 @@ class Program
             Console.WriteLine($"{item.Title} - Curso: {item.Course.Title}");
         }
     }
+
+    static void OneToMany(SqlConnection connection)
+    {
+        var sql = @"SELECT
+                        [Career].[Id],
+                        [Career].[Title],
+                        [CareerItem].[CareerId],
+                        [CareerItem].[Title]
+                    FROM 
+                        [Career]
+                    INNER JOIN 
+                        [CareerItem] ON [CareerItem].[CareerId] = [Career].[Id]
+                    ORDER BY 
+                        [Career].[Title]";
+
+
+        var careers = new List<Career>();
+                                    //Iremos receber um item de career, populado com um CareerItem E o resultado final vai ser um career.
+        var items = connection.Query<Career, CareerItem, Career>(
+            sql,
+            			
+            (career, item) =>
+            {
+                var car = careers.Where(x => x.Id == career.Id).FirstOrDefault();
+                
+                if (car == null)
+                {
+                    car = career;
+                    car.Items.Add(item);
+                    careers.Add(car);
+                }else
+                {
+                    car.Items.Add(item);
+                }
+                //Temos que retornar sempre o objeto pai, que no caso é o career.
+                return career;
+            }, splitOn: "CareerId"); 
+
+        foreach (var career in careers)
+        {
+            Console.WriteLine($"{career.Title}");
+            
+            foreach (var item in career.Items)
+            {
+                Console.WriteLine($"- {item.Title}");
+            }
+        }
+    }
+
+    static void QuerMultiple(SqlConnection connection)
+    {
+
+        // Pra realizar o sql Multiplo basta eu dividar a query com ;
+        var query = $"SELECT * FROM [Category]; SELECT * FROM [Course]";
+
+        using (var multi = connection.QueryMultiple(query)){
+
+            //Aqui estou atribuindo os valores do retorno para as variaves e passando a tipagem(model).
+            var categories = multi.Read<Category>();
+            var courses = multi.Read<Course>();
+
+            foreach (var item in categories)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+
+            foreach (var item in courses)
+            {
+                Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+
+
+    }
+
+    static void SelectIn(SqlConnection connection)
+    {
+        // Execução passando os valores fixos.     
+        var query = @"SELECT
+                        *
+                    FROM 
+                        Career
+                    WHERE
+                        [Id] IN ('01ae8a85-b4e8-4194-a0f1-1c6190af54cb', 'e6730d1c-6870-4df3-ae68-438624e04c72')";
+
+        var itemNotPars = connection.Query<Career>(query);
+        
+        foreach (var item in itemNotPars)
+        {
+            Console.WriteLine(item.Title);
+        }
+
+        //Caso queira passar os valores dinamicos, através de parametros ficaria desta forma:     
+        var item1 = "4327ac7e-963b-4893-9f31-9a3b28a4e72b";
+        
+        var item2 = "92d7e864-bea5-4812-80cc-c2f4e94db1af";
+
+        var queryPars = @"SELECT
+                        *
+                    FROM 
+                        Career
+                    WHERE
+                        [Id] IN @Id";
+        
+        var items = connection.Query<Career>(queryPars, new 
+        {
+            Id = new[]{
+                item1,
+                item2
+                //Ou poderia passar assim
+                //"4327ac7e-963b-4893-9f31-9a3b28a4e72b",
+                //"92d7e864-bea5-4812-80cc-c2f4e94db1af"
+            }
+        });
+        
+        foreach (var item in items)
+        {
+            Console.WriteLine(item.Title);
+        }   
+    }
+
 
 }

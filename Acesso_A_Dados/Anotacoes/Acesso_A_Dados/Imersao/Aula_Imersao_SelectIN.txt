@@ -1,0 +1,53 @@
+
+=== Anotações  Acesso à dados com .NET ===
+	
+- Imersão - Aula SelectIN
+	
+	Podemos realizar o select in com o dapper também, de duas formas: passando parametros e sem passar parametros.
+	
+static void SelectIn(SqlConnection connection)
+	{
+        // Execução passando os valores fixos.
+        
+        var query = @"SELECT
+                        *
+                    FROM 
+                        Career
+                    WHERE
+                        [Id] IN ('01ae8a85-b4e8-4194-a0f1-1c6190af54cb', 'e6730d1c-6870-4df3-ae68-438624e04c72')";
+
+        var itemNotPars = connection.Query<Career>(query);
+        
+        foreach (var item in itemNotPars)
+        {
+            Console.WriteLine(item.Title);
+        }
+
+        //Caso queira passar os valores dinamicos, através de parametros ficaria desta forma:
+		
+        var item1 = "4327ac7e-963b-4893-9f31-9a3b28a4e72b";
+        var item2 = "92d7e864-bea5-4812-80cc-c2f4e94db1af";
+		
+        var queryPars = @"SELECT
+                        *
+                    FROM 
+                        Career
+                    WHERE
+                        [Id] IN @Id";
+        
+        var items = connection.Query<Career>(queryPars, new 
+        {
+            Id = new[]{
+                item1,
+                item2
+                //Ou poderia passar assim
+                //"4327ac7e-963b-4893-9f31-9a3b28a4e72b",
+                //"92d7e864-bea5-4812-80cc-c2f4e94db1af"
+            }
+        });
+        
+        foreach (var item in items)
+        {
+            Console.WriteLine(item.Title);
+        }   
+	}
