@@ -7,5 +7,5 @@ build_property.InvariantGlobalization =
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
-build_property.RootNamespace = Acesso_A_Dados_CRUD
-build_property.ProjectDir = c:\Users\User\Desktop\Repositorio_GITHUB\DotNetCSharp\Acesso_A_Dados\Projeto\Imersao\Acesso_A_Dados_Imersao\
+build_property.RootNamespace = Blog
+build_property.ProjectDir = c:\Users\User\Desktop\Repositorio_GITHUB\DotNetCSharp\Acesso_A_Dados\Projeto\MaoNaMassa\Projeto\Blog\

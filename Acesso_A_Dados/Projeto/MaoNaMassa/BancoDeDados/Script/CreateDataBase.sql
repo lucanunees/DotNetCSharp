@@ -1,0 +1,5 @@
+CREATE DATABASE [Blog]
+GO
+
+USE [BLOG]
+GO
