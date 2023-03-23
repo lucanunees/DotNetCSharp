@@ -2,3 +2,28 @@
 === Anotações  Acesso à dados com .NET ===
 	
 - Imersão - Aula Like
+	
+	O like é bem parecido com o Select IN.
+	
+	exemplo:
+	
+ static void Like(SqlConnection connection)
+    {
+        var parms = "api"
+        var query = @"SELECT 
+                        * 
+                    FROM 
+                        [Course] 
+                    WHERE 
+                        [Title] LIKE @exp";
+
+        var items = connection.Query<Course>(query, new
+        {
+            exp = $"%{parms}%"    
+        });
+
+        foreach(var item in items)
+        {
+            Console.WriteLine($"{item.Title}");
+        }
+    }

@@ -24,7 +24,9 @@ class Program
             // OneToOne(connection);
             // OneToMany(connection);
             // QuerMultiple(connection);
-            SelectIn(connection);
+            // SelectIn(connection);
+            // Like(connection);
+            Transaction(connection);
         }
     }
 
@@ -253,31 +255,32 @@ class Program
 
 
         var careers = new List<Career>();
-                                    //Iremos receber um item de career, populado com um CareerItem E o resultado final vai ser um career.
+        //Iremos receber um item de career, populado com um CareerItem E o resultado final vai ser um career.
         var items = connection.Query<Career, CareerItem, Career>(
             sql,
-            			
+
             (career, item) =>
             {
                 var car = careers.Where(x => x.Id == career.Id).FirstOrDefault();
-                
+
                 if (car == null)
                 {
                     car = career;
                     car.Items.Add(item);
                     careers.Add(car);
-                }else
+                }
+                else
                 {
                     car.Items.Add(item);
                 }
                 //Temos que retornar sempre o objeto pai, que no caso é o career.
                 return career;
-            }, splitOn: "CareerId"); 
+            }, splitOn: "CareerId");
 
         foreach (var career in careers)
         {
             Console.WriteLine($"{career.Title}");
-            
+
             foreach (var item in career.Items)
             {
                 Console.WriteLine($"- {item.Title}");
@@ -291,7 +294,8 @@ class Program
         // Pra realizar o sql Multiplo basta eu dividar a query com ;
         var query = $"SELECT * FROM [Category]; SELECT * FROM [Course]";
 
-        using (var multi = connection.QueryMultiple(query)){
+        using (var multi = connection.QueryMultiple(query))
+        {
 
             //Aqui estou atribuindo os valores do retorno para as variaves e passando a tipagem(model).
             var categories = multi.Read<Category>();
@@ -322,7 +326,7 @@ class Program
                         [Id] IN ('01ae8a85-b4e8-4194-a0f1-1c6190af54cb', 'e6730d1c-6870-4df3-ae68-438624e04c72')";
 
         var itemNotPars = connection.Query<Career>(query);
-        
+
         foreach (var item in itemNotPars)
         {
             Console.WriteLine(item.Title);
@@ -330,7 +334,7 @@ class Program
 
         //Caso queira passar os valores dinamicos, através de parametros ficaria desta forma:     
         var item1 = "4327ac7e-963b-4893-9f31-9a3b28a4e72b";
-        
+
         var item2 = "92d7e864-bea5-4812-80cc-c2f4e94db1af";
 
         var queryPars = @"SELECT
@@ -339,8 +343,8 @@ class Program
                         Career
                     WHERE
                         [Id] IN @Id";
-        
-        var items = connection.Query<Career>(queryPars, new 
+
+        var items = connection.Query<Career>(queryPars, new
         {
             Id = new[]{
                 item1,
@@ -350,12 +354,84 @@ class Program
                 //"92d7e864-bea5-4812-80cc-c2f4e94db1af"
             }
         });
-        
+
         foreach (var item in items)
         {
             Console.WriteLine(item.Title);
-        }   
+        }
     }
 
+    static void Like(SqlConnection connection)
+    {
+        var parms = "api";
+        var query = @"SELECT 
+                        * 
+                    FROM 
+                        [Course] 
+                    WHERE 
+                        [Title] LIKE @exp";
+
+        var items = connection.Query<Course>(query, new
+        {
+            exp = $"%{parms}%"
+        });
+
+        foreach (var item in items)
+        {
+            Console.WriteLine($"{item.Title}");
+        }
+    }
+
+    static void Transaction(SqlConnection connection)
+    {
+        // Criei a categoria e passei as informações.  
+        var category = new Category();
+        category.Id = Guid.NewGuid();
+        category.Title = "Amazon AWS";
+        category.Url = "cloud";
+        category.Summary = "Aprenda sobre cloud AWS (Amazon Web Services)";
+        category.Order = 8;
+        category.Description = "";
+        category.Featured = false;
+
+        // Para evitar um ataque do tipo SQL Injection, jamais concatenar os valores direto no insert, devemos utilizar parametros.
+        //Exemplo na anotações Aula_Dapper.
+
+        var insertSql = @"INSERT INTO 
+                          [Category] 
+                        VALUES (
+                            @Id, 
+                            @Title, 
+                            @Url, 
+                            @Summary, 
+                            @Order, 
+                            @Description, 
+                            @Featured
+                            )";
+
+        // Eu preciso abrir a conexão.
+        connection.Open();
+
+        //Estou criando a transaction na execução da query.
+        using (var transaction = connection.BeginTransaction())
+        {
+            var rows = connection.Execute(insertSql, new
+            {
+                category.Id,
+                category.Title,
+                category.Url,
+                category.Summary,
+                category.Order,
+                category.Description,
+                category.Featured
+                //Aqui no final eu preciso passar a transaction que esta sendo feita.
+            }, transaction);
+
+            // E por fim confirmar ou desfazer a transacao
+            transaction.Rollback();
+            //transaction.Commit();      
+            Console.WriteLine($"{rows} linhas inseridas");
+        }
+    }
 
 }
