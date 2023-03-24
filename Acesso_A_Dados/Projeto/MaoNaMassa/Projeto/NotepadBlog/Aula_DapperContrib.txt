@@ -2,3 +2,37 @@
 	=== Mão na Massa ===
 
 Aula Dapper Contrib
+
+	 o Dapper contrib é uma extensão do dapper, com algumas funcionalidades a mais.
+	por exemplo, ao executar um select * from, eu não preciso passar a sintaxe do select
+	e sim chamar a função abaixo:
+	
+	 public static void ReadUser()
+    {
+        using(var connection = new SqlConnection(CONNECTION_STRING))
+        {
+			// Aqui ele já realiza o select * na tabela,
+			// porém ficar espero porque ele pluraliza a tabela ou seja a tabela esta User, ele vai buscar como User
+			// para corrigir isso precisa realizar uma modificação na models.
+            var users = connection.GetAll<User>();
+
+            foreach (var item in users)
+            {
+                Console.WriteLine($"{item.Name}");
+            }
+        }
+    }
+	
+	=== MODELS ===
+	 
+	 using Dapper.Contrib.Extensions;
+
+	namespace Blog.Models
+	{
+	 [Table("[User]")]
+		
+		public class User
+		{
+			public int Id { get; set; }
+		}
+	}
