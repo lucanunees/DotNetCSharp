@@ -1,0 +1,73 @@
+
+	=== Mão na Massa ===
+
+Aula CRUD
+	O CRUD (Create, Read, Update e Delete) é feito basicamente da mesma forma.
+	Exemplo:
+    
+	public static void CreateUser()
+    {
+        // Para inserir um usuario, eu preciso criar um objeto usuario.
+        var user = new User()
+        {
+            Bio = "Equipe lucas.io",
+            Email = "Equipe@dev.io",
+            Image = "Https://",
+            Name = "Equipe lucas.io",
+            PasswordHash = "HASH",
+            Slug = "Equipe-lucas"
+        };
+
+        using(var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            //Ele retorna um inteiro, com a quantidade de linhas afetas.
+            var rows = connection.Insert<User>(user);
+            {
+                Console.WriteLine($"Cadastro realizado com sucesso. Linhas inseridas - {rows}." );
+            }
+        }
+    }
+	
+	public static void ReadUser()
+    {
+        using(var connection = new SqlConnection(CONNECTION_STRING))
+        {
+             //Aqui iremos pegar somente 1 usuario cujo o ID é = 1   
+            var user = connection.Get<User>(1);
+            Console.WriteLine($"{user.Name}");
+        }
+    }
+
+    public static void UpdateUser()
+    {
+        var userUpdate = new User()
+        {
+            Id = 2, // Passar o ID para update
+            Bio = "Equipe de dev lucas.io",
+            Email = "Equipe@dev.io",
+            Image = "Https://",
+            Name = "Equipe de dev lucas.io",
+            PasswordHash = "HASH",
+            Slug = "Equipe-lucas"
+        };
+
+        using(var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            var result = connection.Update<User>(userUpdate);
+            {
+                Console.WriteLine($"Atualização com sucesso. Resultado do update - {result}." );
+            }
+        }
+    }
+
+    public static void DeleteUser()
+    {
+        using (var connection = new SqlConnection(CONNECTION_STRING))
+        {
+            var userDelete = connection.Get<User>(2);
+            var result = connection.Delete<User>(userDelete);
+            {
+                Console.WriteLine($"Usuario deletado com sucesso. Resultado - {result}");
+            }
+        }
+    }
