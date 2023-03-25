@@ -1,4 +1,5 @@
 ﻿using Blog.Models;
+using Blog.Repositories;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 
@@ -8,14 +9,20 @@ class Program
     private const string CONNECTION_STRING = @"Server=localhost,1433;Database=Blog;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
     static void Main(string[] args)
     {
+        // Desta forma não preciso estanciar toda vez dentro do método.
+        var connection = new SqlConnection(CONNECTION_STRING);
+        
+        connection.Open();
         // ReadUsers();
         // ReadUser();
         // CreateUser();
         // UpdateUser();
-        DeleteUser();
+        // DeleteUser();
+        connection.Close();
     }
 
     /* ================ CRUD ================ */
+        //Iremos utilizar o Repositoy Patter
     public static void CreateUser()
     {
         // Para inserir um usuario, eu preciso criar um objeto usuario.
@@ -39,6 +46,8 @@ class Program
         }
     }
 
+/* public static void ReadUser()
+
     public static void ReadUser()
     {
         using (var connection = new SqlConnection(CONNECTION_STRING))
@@ -48,7 +57,9 @@ class Program
             Console.WriteLine($"{user.Name}");
         }
     }
+*/
 
+/*  public static void ReadUsers()
     public static void ReadUsers()
     {
         using (var connection = new SqlConnection(CONNECTION_STRING))
@@ -64,6 +75,7 @@ class Program
             }
         }
     }
+*/
 
     public static void UpdateUser()
     {
@@ -99,4 +111,22 @@ class Program
         }
     }
 
+    /*================ Repository Pattern ================*/
+
+    public static void ReadUsers(SqlConnection connection)
+    {
+        var repository = new UserRepository(connection);
+        var users = repository.GetAll();
+
+        //Quando tem apenas uma linha podemos tirar as {}
+        foreach(var user in users)       
+            Console.WriteLine($"Usuário: {user.Name}");       
+    }
+
+    public static void ReadUser(SqlConnection connection)
+    {
+        var repository = new UserRepository(connection);
+        var getUser = repository.Get(2);   
+        Console.WriteLine($"Usuário: {getUser.Name}");
+    }
 }
