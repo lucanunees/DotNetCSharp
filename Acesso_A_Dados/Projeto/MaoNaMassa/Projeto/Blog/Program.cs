@@ -12,8 +12,9 @@ class Program
         // Desta forma não preciso estanciar toda vez dentro do método.
         var connection = new SqlConnection(CONNECTION_STRING);
         
-        connection.Open();
-        // ReadUsers();
+        connection.Open(); 
+        ReadUsers(connection);
+        ReadRoles(connection);
         // ReadUser();
         // CreateUser();
         // UpdateUser();
@@ -111,8 +112,8 @@ class Program
         }
     }
 
-    /*================ Repository Pattern ================*/
 
+    /*================ Repository Pattern ================*/
     public static void ReadUsers(SqlConnection connection)
     {
         var repository = new UserRepository(connection);
@@ -128,5 +129,14 @@ class Program
         var repository = new UserRepository(connection);
         var getUser = repository.Get(2);   
         Console.WriteLine($"Usuário: {getUser.Name}");
+    }
+
+    public static void ReadRoles(SqlConnection connection)
+    {
+        var repository = new RoleRepository(connection);
+        var roles = repository.Get();
+
+        foreach (var role in roles)
+            Console.WriteLine(role.Name);
     }
 }

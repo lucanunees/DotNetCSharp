@@ -1,0 +1,44 @@
+
+	=== Mão na Massa ===
+	
+Aula Role Repository
+
+Criamos um repositorio parecido com o outro.. mudando apenas a model
+
+using Blog.Models;
+using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
+
+namespace Blog.Repositories
+{
+
+    public class RoleRepository
+    {
+        private readonly SqlConnection _connection;
+
+        //Método construtor
+        public RoleRepository(SqlConnection connection)       
+            => _connection = connection;
+        
+        public IEnumerable<Role>Get()
+        => _connection.GetAll<Role>();
+
+        public Role Get(int id)
+        => _connection.Get<Role>(id);
+
+        public void Create(Role role)
+        => _connection.Insert<Role>(role);
+    }
+}
+
+===== Método que chama o repository =====
+Dentro da program.cs
+
+    public static void ReadRoles(SqlConnection connection)
+    {
+        var repository = new RoleRepository(connection);
+        var roles = repository.Get();
+
+        foreach (var role in roles)
+            Console.WriteLine(role.Name);
+    }

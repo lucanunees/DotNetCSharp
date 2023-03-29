@@ -23,7 +23,7 @@ namespace Blog.Repositories
         //Diferença do IEnurable ele é mais puro, so podemos percorrer ele, diferente do List que podemos remover e add.
         public IEnumerable<User> GetAll()
         {
-            /*
+            /* jeito é o "antigo"
             //Tesse jeito é o "antigo" podemos otimizar fazendo da forma abaixo:
             using (var connection = new SqlConnection(""))
             {
@@ -43,6 +43,28 @@ namespace Blog.Repositories
             => _connection.Get<User>(id);
         
         public void  Create(User user)
-            => _connection.Insert<User>(user);      
+            => _connection.Insert<User>(user);     
+
+        public void Update(User user)
+        {
+            if(user.Id != 0)
+            {
+                _connection.Update<User>(user);               
+            }  
+        }
+
+        public void Delete(User user)
+        {
+            if (user.Id != 0)
+            _connection.Delete<User>(user);
+        }
+
+        public void Delete(int id)
+        {
+            if (id != 0)
+                return;
+            var user = _connection.Get<User>(id);
+            _connection.Delete<User>(user);
+        }
     }
 }
