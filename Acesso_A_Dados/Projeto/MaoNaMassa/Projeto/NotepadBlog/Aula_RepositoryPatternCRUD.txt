@@ -1,6 +1,4 @@
 
-
-
 === CRUD ===
 Utilizando o Repository Patterns criamos um CRUD otimizado.
 

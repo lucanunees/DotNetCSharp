@@ -4,8 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Blog.Repositories
 {
-
-    public class RoleRepository
+       public class RoleRepository
     {
         private readonly SqlConnection _connection;
 

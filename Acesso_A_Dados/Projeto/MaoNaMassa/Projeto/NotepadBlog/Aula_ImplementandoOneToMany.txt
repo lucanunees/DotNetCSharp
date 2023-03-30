@@ -1,0 +1,10 @@
+
+=== Mão na Massa ===
+	
+Aula Implementando One to Many
+
+	Para utilizar a lista relacioada, por exemplo de users com roles, dentro
+da model eu crio prop list<Roles> e já no método construtor eu inicializo ela.
+Após isso eu tenho acesso as propriedades porém elas não estao preenchidas com os dados do banco, apenas os dados do usuario.
+
+Para preencher os dados do roles é preciso

@@ -1,0 +1,80 @@
+
+=== Mão na Massa ===
+	
+Aula Repositorio Genericos
+ Um repositorio generico é utilizado para criar métodos que podem ser reutilizados pelo sistemas
+Exemplo:
+
+using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
+
+namespace Blog.Models
+{
+    public class Repository<TModel> where TModel : class 
+    {
+    // Setando está condição "where", estou dizendo que só posso receber uma classe, se 
+    // deixar sem essa condição, ele pode receber qualquer coisa.
+    // Desta forma eu estou criando uma classe generica, Estou esperando um type de uma das models.
+    // Desta forma eu defino qual tipo será essa classe/repositorio, por isso utilizar o T = Type
+
+    // Dentro desse repositorio teremos o CRUD porém vai ser generico, para 
+    // qualquer método poder chamar.
+	
+        private readonly SqlConnection _connection;
+        public Repository(SqlConnection connection)
+        => _connection = connection;
+
+
+        public IEnumerable<TModel> Get()
+        => _connection.GetAll<TModel>();
+		
+		
+		public TModel Get(int id)
+        => _connection.Get<TModel>(id);
+
+        public void Create(TModel model)
+        => _connection.Insert<TModel>(model);
+
+        public void Update(TModel model)
+        {                 
+			-- faltou esses
+        }
+
+        public void Delete(TModel model)
+        {
+
+        }
+        
+        public void Delete(int id)
+        {
+            var model = _connection.Get<TModel>(id);
+            _connection.Delete<TModel>(model);
+        }
+    }
+}
+
+======= CHAMADA DO MÉTODO =======
+
+     /*================ Repository Generico ================*/
+
+    public static void ReadUsersGen(SqlConnection connection)
+    {   
+        //AO instanciar o repositorio generico eu passo o tipo que eu quero e a connection.
+        var repository = new Repository<User>(connection);
+        var users = repository.Get();
+
+        foreach (var user in users)
+        Console.WriteLine($"Utilizando repositorio Generico. Nome do usuario: {user.Name}");
+
+    }
+	    
+	public static void ReadTagsGen (SqlConnection connection)
+    {
+        var repository = new Repository<Tag>(connection);
+        var items = repository.GetAll();
+
+        foreach(var item in items)
+        {
+            Console.WriteLine($"{item.Name}");
+        }
+    }
