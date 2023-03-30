@@ -13,17 +13,23 @@ class Program
         var connection = new SqlConnection(CONNECTION_STRING);
         
         connection.Open(); 
-        ReadUsers(connection);
-        ReadRoles(connection);
+        // ReadUsers(connection);
+        // ReadRoles(connection);
         // ReadUser();
         // CreateUser();
         // UpdateUser();
         // DeleteUser();
+
+        /*UTILIZANDO REPOSITORIO GENERICO*/
+         ReadUsersGen(connection);
+        // ReadRolesGen(connection);
+        // ReadTagsGen(connection);
+        // UpdateUserGen(connection);
         connection.Close();
     }
 
     /* ================ CRUD ================ */
-        //Iremos utilizar o Repositoy Patter
+        
     public static void CreateUser()
     {
         // Para inserir um usuario, eu preciso criar um objeto usuario.
@@ -114,6 +120,7 @@ class Program
 
 
     /*================ Repository Pattern ================*/
+    //Iremos utilizar o Repositoy Patter
     public static void ReadUsers(SqlConnection connection)
     {
         var repository = new UserRepository(connection);
@@ -138,5 +145,54 @@ class Program
 
         foreach (var role in roles)
             Console.WriteLine(role.Name);
+    }
+
+     /*================ Repository Generico ================*/
+
+    public static void ReadUsersGen(SqlConnection connection)
+    {   
+        //AO instanciar o repositorio generico eu passo o tipo que eu quero e a connection.
+        var repository = new Repository<User>(connection);
+        var items = repository.GetAll();
+
+        foreach (var item in items)
+        {
+            Console.WriteLine($"Utilizando repositorio Generico. Nome do usuario: {item.Name}");
+
+            foreach(var role in item.Roles)
+            {
+                Console.WriteLine($"- {role.Name}");
+            }
+        }
+        
+    }
+
+    public static void ReadRolesGen (SqlConnection connection)
+    {
+        var repository = new Repository<Role>(connection);
+        var items = repository.GetAll();
+
+        foreach(var item in items)
+        {
+            Console.WriteLine($"{item.Name}");
+        }
+    }
+
+    public static void ReadTagsGen (SqlConnection connection)
+    {
+        var repository = new Repository<Tag>(connection);
+        var items = repository.GetAll();
+
+        foreach(var item in items)
+        {
+            Console.WriteLine($"{item.Name}");
+        }
+    }
+
+    public static void UpdateUserGen(SqlConnection connection)
+    {
+        var repository = new Repository<User>(connection);
+        var getUser = repository.Get(1);
+        repository.Update(getUser);
     }
 }
