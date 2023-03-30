@@ -1,4 +1,5 @@
-﻿using Blog.Models;
+﻿using blog.Repositories;
+using Blog.Models;
 using Blog.Repositories;
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
@@ -21,7 +22,8 @@ class Program
         // DeleteUser();
 
         /*UTILIZANDO REPOSITORIO GENERICO*/
-         ReadUsersGen(connection);
+         ReadUsersWithRoles(connection);
+        // CreateUserGen(connection);
         // ReadRolesGen(connection);
         // ReadTagsGen(connection);
         // UpdateUserGen(connection);
@@ -149,11 +151,11 @@ class Program
 
      /*================ Repository Generico ================*/
 
-    public static void ReadUsersGen(SqlConnection connection)
+    public static void ReadUsersWithRoles(SqlConnection connection)
     {   
         //AO instanciar o repositorio generico eu passo o tipo que eu quero e a connection.
-        var repository = new Repository<User>(connection);
-        var items = repository.GetAll();
+        var repository = new RepositoryUser(connection);
+        var items = repository.GetWithRoles();
 
         foreach (var item in items)
         {
@@ -161,10 +163,9 @@ class Program
 
             foreach(var role in item.Roles)
             {
-                Console.WriteLine($"- {role.Name}");
+                Console.WriteLine($"Roles usuarios - {role.Name}");
             }
-        }
-        
+        }  
     }
 
     public static void ReadRolesGen (SqlConnection connection)
@@ -189,6 +190,21 @@ class Program
         }
     }
 
+    public static void CreateUserGen(SqlConnection connection)
+    {
+        var user = new User()
+        {
+            Email = "email@balta.io",
+            Bio = "Biografia",
+            Image = "Imagem",
+            Name = "Name",
+            PasswordHash = "hash",
+            Slug = "Slug"
+        };
+        var repository = new Repository<User>(connection);
+        
+        repository.Create(user);
+    }
     public static void UpdateUserGen(SqlConnection connection)
     {
         var repository = new Repository<User>(connection);

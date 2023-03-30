@@ -1,0 +1,120 @@
+
+=== Mão na Massa ===
+	
+Aula Repositorio Especifico/ Especialista
+
+	Por exemplo, dentro da model User, temos uma lista de Role, é uma tabela que esta relacionada.
+Para poder popular essas informações ou consultar, eu preciso passar na model primeiramente a lista e 
+colocar como Write(false), porque desta forma ele não deixa realizar/escrever o insert de roles, já que é uma tabela separada de user,
+tem apenas um relacionamento.
+
+===== Model User =====
+using Dapper.Contrib.Extensions;
+
+namespace Blog.Models
+{
+    [Table("[User]")]
+    public class User
+    {
+        public User()  
+        => Roles = new List<Role>();
+ 
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash {get; set;}
+        public string Bio { get; set; }
+        public string Image { get; set; }
+        public string Slug { get; set; }
+
+        [Write(false)] // com isso ele não deixa realizar/escrever o insert de Roles
+        public List<Role> Roles {get; set;}
+    }
+}
+
+===== Método dentro da program =====
+
+ Desta forma eu consigo realizar o insert de um novo usuario sem dar erro.
+ 
+    public static void CreateUserGen(SqlConnection connection)
+    {
+        var user = new User()
+        {
+            Email = "email@balta.io",
+            Bio = "Biografia",
+            Image = "Imagem",
+            Name = "Name",
+            PasswordHash = "hash",
+            Slug = "Slug"
+        };
+        var repository = new Repository<User>(connection);
+        
+        repository.Create(user);
+
+    }
+    public static void UpdateUserGen(SqlConnection connection)
+    {
+        var repository = new Repository<User>(connection);
+        var getUser = repository.Get(1);
+        repository.Update(getUser);
+    }
+}
+
+
+===== Repositorio especifico ===== 
+
+	 Criamos o método que seleciona os users e roles. 
+	 OBS: Importante a list de roles já esta inicializada para quando for adicionar uma role não dar erro, 
+	 por isso que no método construtor da classe de User, já iniciamos a list.
+	 
+using Blog.Models;
+using Blog.Repositories;
+using Microsoft.Data.SqlClient;
+
+namespace blog.Repositories
+{
+    public class RepositoryUser : Repository<User>
+    {
+        private readonly SqlConnection _connection;
+
+        public RepositoryUser(SqlConnection connection)
+        :base(connection) // Aqui estou chamando o construtor da classe base, que seria a repository e passando o construtor.
+        => _connection = connection;
+    }
+	
+	public List<User> GetWithRoles()
+        {
+			// Quando temos esse tipo de consulta, o dapper não consegue realizar, temos que escrever a query.
+            var query = @"SELECT
+                            [User].*,
+                            [Role].*
+                        FROM 
+                            [User]
+                        LEFT JOIN [UserRole] ON [UserRole].[UserId] = [User].[Id]
+                        LEFT JOIN [Role] ON [UserRole].[RoleId] = [Role].[Id]";
+
+            var users = new List<User>();
+
+            var items = _connection.Query<User, Role, User>(
+                query,
+                (user, role) => // Aqui são os dois tipos de dados que vou receber da tabela, separados a consulta pelo ID
+                {
+                    var usr = users.FirstOrDefault(x => x.Id == user.Id); // AQui eu verifico se esse usuario já existe.
+                    if (usr == null)
+                    {
+                        usr = user;
+                        if (role != null)
+                            usr.Roles.Add(role);
+
+                        users.Add(usr);
+                    }
+                    else
+                        usr.Roles.Add(role);
+
+                    return user;
+                }, splitOn: "Id"); 
+        
+            return users;
+        }
+	
+}

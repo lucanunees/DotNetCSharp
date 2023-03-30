@@ -1,0 +1,14 @@
+
+	=== Inicializando o projeto ===
+
+	Utilizando o visual code, abra uma pasta aonde o projeto irá ficar, no terminal digite: dotnet new console --use-program-main
+	Após criar o projeto, criar a pasta model, são os modelos referencias para as tabelas que temos no banco de dados,
+	ou seja para cada tabela no banco de dados teremos uma model.
+	
+== ADD Packages
+Adicionamos os pacotes:
+
+dotnet add package Microsoft.Data.SqlClient
+dotnet add package Dapper
+dotnet add package Dapper.Contrib
+
