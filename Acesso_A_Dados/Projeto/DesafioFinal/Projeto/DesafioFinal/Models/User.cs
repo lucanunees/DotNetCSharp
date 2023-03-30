@@ -1,6 +1,6 @@
 using Dapper.Contrib.Extensions;
 
-namespace Blog.Models
+namespace DesafioFinal.Models
 {
     [Table("[User]")]
     public class User

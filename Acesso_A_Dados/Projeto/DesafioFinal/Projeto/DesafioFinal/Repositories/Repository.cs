@@ -1,18 +1,10 @@
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 
-namespace Blog.Repositories
+namespace DesafioFinal.Repositories
 {
     public class Repository<TModel> where TModel : class
     {
-        // Setando está condição "where", estou dizendo que só posso receber uma classe, se 
-        // deixar sem essa condição, ele pode receber qualquer coisa.
-        //Desta forma eu estou criando uma classe generica, Estou esperando um type de uma das models.
-        //Desta forma eu defino qual tipo será essa classe/repositorio, por isso utilizar o T = Type
-
-        //Dentro desse repositorio teremos o CRUD porém vai ser generico, para 
-        //qualquer método poder chamar.
-
         private readonly SqlConnection _connection;
         public Repository(SqlConnection connection)
         => _connection = connection;
