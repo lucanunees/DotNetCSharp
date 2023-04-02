@@ -1,0 +1,112 @@
+
+=== Desafio Final ===
+Aula Estruturando o desafio.
+
+- Retirar todos os métodos que tem dentro do main e deixar apenas a abertura e fechamento da conexão.
+E iniciarmos a configuração das telas.
+
+- Criar a pasta dentro do projeto chamada Screens e crar a classe, com um método padrão de load.
+
+Obs: Método padrão que tera em todas as telas, que realizam o load (carregamento), ficando desta formas as classes
+para realizar o crud.
+
+namespace Blog.Screens.TagScreens
+{
+
+    public static class ListTagScreen
+    {
+        public static void Load()
+        {
+           Console.Clear();
+            Console.WriteLine("-------------------------");
+            Console.WriteLine("O que deseja fazer?");
+            Console.WriteLine();
+            Console.WriteLine("1 - Listar tags.");
+            Console.WriteLine("2 - Cadastrar tags.");
+            Console.WriteLine("3 - Atualizar tags.");
+            Console.WriteLine("4 - Excluir tags.");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            
+            //Colocando o ponto de exclamação, ele esta forçando que seja uma string.
+            var options = short.Parse(Console.ReadLine()!);
+
+            switch (options)
+            {
+                case 1:
+                    Load();
+                    break;
+                case 2:
+                    Load();
+                    break;
+                default: 
+                    Load();
+                    break;
+            } 
+        }
+    }
+}
+
+ - Dentro da main, eu vou ter o método load, que chama as outras funcionalidades do sistema:
+ 
+using Blog.Screens.TagScreens;
+using Microsoft.Data.SqlClient;
+
+namespace DesafioFinal;
+class Program
+{
+    private const string CONNECTION_STRING = @"Server=localhost,1433;Database=Blog;User ID=sa;Password=Punto@2015;Trusted_Connection=False; TrustServerCertificate=True;";
+    static void Main(string[] args)
+    {     
+        var connection = new SqlConnection(CONNECTION_STRING);
+
+        connection.Open();
+
+        Load(); 
+
+        Console.ReadKey();
+        connection.Close();      
+    }
+	
+	// o método Load,é o que chama as funcionalidades dos outros sistemas. 
+	private static void Load()
+    {
+        Console.Clear();
+        Console.WriteLine("Menu Blog");
+        Console.WriteLine("------------------------------------");
+        Console.WriteLine("O que deseja fazer?");
+        Console.WriteLine();
+        Console.WriteLine("1 - Gestão de usuário.");
+        Console.WriteLine("2 - Gestão de perfil.");
+        Console.WriteLine("3 - Gestão de categoria.");
+        Console.WriteLine("4 - Gestão de tag.");
+        Console.WriteLine("5 - Vincular perfil/usuário.");
+        Console.WriteLine("6 - Vincular post/tag");
+        Console.WriteLine("7 - Relatórios");
+        Console.WriteLine("");
+        Console.WriteLine("");
+
+        var option = short.Parse(Console.ReadLine()!);
+
+        switch(option)
+        {
+            case 1:             
+                break;
+            case 2: 
+                break;
+            case 3:
+                break;
+            case 4: 
+                MenuTagScreen.Load(); //Exemplo
+                break;
+            case 5:
+                break;
+            case 6: 
+                break;
+            case 7:
+                break;
+            default:
+                break;
+        }
+    }
+}
