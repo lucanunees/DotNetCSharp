@@ -14,8 +14,7 @@ namespace Blog.Screens.UserScreens
             Console.WriteLine("3 - Atualizar usuário.");
             Console.WriteLine("4 - Excluir usuário.");
             Console.WriteLine("");
-            Console.WriteLine("");
-            
+        
             //Colocando o ponto de exclamação, ele esta forçando que seja uma string.
             var options = short.Parse(Console.ReadLine()!);
 
