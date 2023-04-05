@@ -5,7 +5,7 @@ Aula Estruturando o desafio.
 - Retirar todos os métodos que tem dentro do main e deixar apenas a abertura e fechamento da conexão.
 E iniciarmos a configuração das telas.
 
-- Criar a pasta dentro do projeto chamada Screens e crar a classe, com um método padrão de load.
+- Criar a pasta dentro do projeto chamada Screens e criar a classe, com um método padrão de load.
 
 Obs: Método padrão que tera em todas as telas, que realizam o load (carregamento), ficando desta formas as classes
 para realizar o crud.

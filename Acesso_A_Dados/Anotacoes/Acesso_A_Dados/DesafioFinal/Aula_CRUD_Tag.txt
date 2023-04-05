@@ -1,0 +1,178 @@
+
+=== Desafio Final ===
+Aula Criando/Atualizando e Excluindo tag
+	
+	- Dentro do método de create tag, iremos colocar no Método load as informações para 
+o usuario cadastrar uma nova tag:
+
+public static void Load()
+        {
+			Console.Clear();
+            Console.WriteLine("Nova Tag");
+            Console.WriteLine("------------------------------------");
+            
+            Console.WriteLine();
+            Console.WriteLine("Name: ");           
+            var name = Console.ReadLine();
+            
+            Console.WriteLine();
+            Console.WriteLine("Slug: ");
+            var slug = Console.ReadLine();
+           
+            Create(new Tag
+            {
+                Name = name,
+                Slug = slug,
+            });
+            Console.ReadKey();
+            MenuTagScreen.Load();
+        } 
+
+E abaixo o método para realizar a criação:
+
+  private static void Create(Tag tag)
+        {        
+            try
+            {
+                var repository = new Repository<Tag>();
+                repository.Create(tag);
+                Console.WriteLine("Tag cadastrada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel cadastrar a nova tag.");
+                Console.WriteLine($"Erro: {ex.Message}");
+            }        
+        }
+
+============ Atualizar ============
+
+using DesafioFinal.Models;
+using DesafioFinal.Repositories;
+
+namespace Blog.Screens.TagScreens
+{
+    public static class UpdateTagScreen
+    {
+        public static void Load()
+        {
+            Console.Clear();
+            Console.WriteLine("Atualizar Tag cadastrada");
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine();
+            Console.WriteLine("Qual tag ou slug você deseja atualizar?");
+            ListTagScreen.List();
+            Console.WriteLine();
+            
+            Console.WriteLine("ID: ");
+            var id = Console.ReadLine();
+            Console.WriteLine();
+            Console.WriteLine("Name: ");
+            var name = Console.ReadLine();
+            
+            Console.WriteLine();
+            Console.WriteLine("Slug: ");
+            var slug = Console.ReadLine();
+
+            Update(new Tag
+            {
+                Id = int.Parse(id),
+                Name = name,
+                Slug = slug,
+            });
+            Console.ReadKey();
+            MenuTagScreen.Load();
+        }
+
+        private static void Update(Tag tag)
+        {
+            try
+            {
+                var repository = new Repository<Tag>();
+                repository.Update(tag);
+                Console.WriteLine("Tag atualizada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel realizar a atualização da tag Solicitada.");
+                Console.WriteLine($"Erro: {ex.Message}");
+            }
+        }
+    }
+}
+
+============ Deletar ============
+
+using DesafioFinal.Models;
+using DesafioFinal.Repositories;
+
+namespace Blog.Screens.TagScreens
+{
+    public static class DeleteTagScreen
+    {
+        public static void Load()
+        {
+            Console.Clear();
+            Console.WriteLine("Deletar Tag cadastrada");
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine();
+            Console.WriteLine("Qual tag você deseja Deletar?");
+            ListTagScreen.List();
+            Console.WriteLine();
+            
+            Console.WriteLine("ID: ");
+            var id = Console.ReadLine();
+
+            Delete(new Tag
+            {
+                Id = int.Parse(id),
+            });
+            Console.ReadKey();
+            MenuTagScreen.Load();
+        }
+
+        private static void Delete(Tag tag)
+        {
+            try
+            {
+                var repository = new Repository<Tag>();
+                repository.Delete(tag.Id);
+                Console.WriteLine("Tag excluida com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel excluir a tag solicitada.");
+                Console.WriteLine($"Erro: {ex.Message}");
+            }
+        }
+    }
+}
+
+============ Listar ============
+
+using DesafioFinal.Models;
+using DesafioFinal.Repositories;
+
+namespace Blog.Screens.TagScreens
+{
+    public static class ListTagScreen
+    {
+        public static void Load()
+        {
+            Console.Clear();
+            Console.WriteLine("Lista de Tags");
+            Console.WriteLine("------------------------------------");
+            List();
+            Console.ReadKey();
+            MenuTagScreen.Load();
+        }
+
+        public static void List()
+        {
+            var repository = new Repository<Tag>();
+            var tags = repository.GetAll();
+            foreach (var item in tags)
+                Console.WriteLine($" Id: {item.Id} - Nome: {item.Name}  Slug: ({item.Slug})");
+        }
+    }
+}

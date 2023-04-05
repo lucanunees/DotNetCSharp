@@ -1,6 +1,6 @@
 namespace Blog.Screens.TagScreens
 {
-     public static class MenuTagScreen
+    public static class MenuTagScreen
     {
         public static void Load()
         {
@@ -14,8 +14,7 @@ namespace Blog.Screens.TagScreens
             Console.WriteLine("3 - Atualizar tags.");
             Console.WriteLine("4 - Excluir tags.");
             Console.WriteLine("");
-            Console.WriteLine("");
-            
+
             //Colocando o ponto de exclamação, ele esta forçando que seja uma string.
             var options = short.Parse(Console.ReadLine()!);
 
@@ -33,10 +32,10 @@ namespace Blog.Screens.TagScreens
                 case 4:
                     DeleteTagScreen.Load();
                     break;
-                default: 
+                default:
                     Load();
                     break;
-            } 
-        }   
+            }
+        }
     }
 }

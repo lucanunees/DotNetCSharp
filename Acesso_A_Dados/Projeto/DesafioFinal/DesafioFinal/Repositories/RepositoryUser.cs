@@ -1,17 +1,11 @@
+using Blog;
 using Dapper;
 using DesafioFinal.Models;
-using Microsoft.Data.SqlClient;
 
 namespace DesafioFinal.Repositories
 {
     public class RepositoryUser : Repository<User>
     {
-        private readonly SqlConnection _connection;
-
-        public RepositoryUser(SqlConnection connection)
-        :base(connection) 
-        => _connection = connection;
-
         public List<User> GetWithRoles()
         {
             var query = @"SELECT
@@ -24,7 +18,7 @@ namespace DesafioFinal.Repositories
 
             var users = new List<User>();
 
-            var items = _connection.Query<User, Role, User>(
+            var items = Database.Connection.Query<User, Role, User>(
                 query,
                 (user, role) => 
                 {
